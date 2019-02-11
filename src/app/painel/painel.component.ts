@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output, OnDestroy } from '@angular/core';
 import { Frase} from '../shared/frase.model';
 import { Frases } from './frase.mock'
 
@@ -11,22 +11,25 @@ export class PainelComponent implements OnInit {
 
   public instrucao : string = "Traduza a frase:"
   public frases: Frase[] = Frases
-  public resposta : string 
+  public resposta : string = ""
 
   public rodada : number = 0
   public rodadaFrase : Frase
+
+  public progresso : number = 0
+  public tentativas : number = 3
+
+  @Output() public encerrarJogo : EventEmitter<string> =  new EventEmitter();
   
   constructor() { 
-    this.rodadaFrase =  this.frases[this.rodada]
-    console.log(this.frases[this.rodada])
+    this.atualizaRodada()   
   }
 
   ngOnInit() {
   }
 
   public atualizaResposta(resposta: Event): void {    
-    this.resposta = (<HTMLInputElement>resposta.target).value    
-    //console.log(this.resposta)
+    this.resposta = (<HTMLInputElement>resposta.target).value       
   }
 
   public verificarResposta(): void{
@@ -34,14 +37,30 @@ export class PainelComponent implements OnInit {
     if(this.resposta == this.rodadaFrase.frasePtBr)
     {     
       this.rodada++
-      this.rodadaFrase = this.frases[this.rodada]
-      
+      this.progresso = this.progresso + (100 / this.frases.length)     
 
-      alert("Resposta correta!")
+      if(this.rodada === this.frases.length){
+        this.encerrarJogo.emit("vitoria")
+        alert("Concluído com sucesso!") 
+        return
+      }
+    
+      this.atualizaRodada()    
     }
     else
-    {alert("Resposta errada!")}
+    {
+      this.tentativas--
+      
+      if(this.tentativas === -1){
+        this.encerrarJogo.emit("derrota")
+        alert( this.encerrarJogo.emit("derrota"))
+        alert("Acabou as tentativas!")
+      }
+    }    
+  }
 
-    console.log(this.resposta);
+  public atualizaRodada(): void{
+    this.rodadaFrase =  this.frases[this.rodada]
+    this.resposta =  ""
   }
 }
