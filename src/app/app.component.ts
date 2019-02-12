@@ -10,8 +10,7 @@ export class AppComponent {
   public jogoEmAndamento : boolean = true
   public tipoEncerrramento: string
 
-  public encerrarJogo(tipo : string) : void{
-    console.log(tipo)
+  public encerrarJogo(tipo : string) : void{  
     this.jogoEmAndamento = false
     this.tipoEncerrramento = tipo
   }
